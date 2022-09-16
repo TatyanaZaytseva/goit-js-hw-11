@@ -3,58 +3,45 @@ import Notiflix from 'notiflix';
 // import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-import API from './fetchPictures.js';
+// import API from './fetchPictures.js';
+import { PicturesApiService } from './API-service';
 import { markupCard } from './markupCard.js';
 
-let searchQuery = '';
 const refs = {
   form: document.getElementById('search-form'),
   gallery: document.querySelector('.gallery'),
   loadMoreBtn: document.querySelector('.load-more'),
 };
 
+const picturesApiService = new PicturesApiService();
+
 refs.form.addEventListener('submit', onSearchPictures);
 refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onSearchPictures(event) {
   event.preventDefault();
-  searchQuery = event.target.elements.searchQuery.value;
-  if (!searchQuery) {
-    refs.gallery.innerHTML = '';
-    return;
-  }
-  API.fetchPicturesByName(searchQuery)
-    .then(renderPicturesCards)
-    .catch(error => {
-      console.log(error);
-    });
-}
-
-function renderPicturesCards(data) {
-  const images = data.hits;
-  if (images.length === 0) {
-    Notiflix.Notify.failure(
-      'Sorry, there are no images matching your search query. Please try again.'
-    );
-    return;
-  }
-  Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
-  const pictureCard = markupCard(images);
-  refs.gallery.innerHTML = pictureCard;
+  clearPicturesGallery();
+  picturesApiService.query = event.target.elements.searchQuery.value;
+  picturesApiService.resetPage();
+  picturesApiService.fetchPicturesByName().then(renderPicturesCards);
 }
 
 function onLoadMore() {
-  API.fetchPicturesByName(searchQuery)
-    .then(renderPicturesCards)
-    .catch(error => {
-      console.log(error);
-    });
+  picturesApiService.fetchPicturesByName().then(renderPicturesCards);
 }
 
-new SimpleLightbox('.gallery a', {
-  captionsData: 'alt',
-  captionsDelay: 250,
-});
+function renderPicturesCards(hits) {
+  refs.gallery.insertAdjacentHTML('beforeend', markupCard(hits));
+}
+
+function clearPicturesGallery() {
+  refs.gallery.innerHTML = '';
+}
+
+// new SimpleLightbox('.gallery a', {
+//   captionsData: 'alt',
+//   captionsDelay: 250,
+// });
 
 // refs.gallery.addEventListener('click', onCardHandleClick);
 // const instance = basicLightbox.create(`<img src="" alt="full-image"/>`);
