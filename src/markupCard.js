@@ -1,5 +1,4 @@
 export function markupCard(hits) {
-  console.log(hits);
   return hits
     .map(
       ({
@@ -11,21 +10,21 @@ export function markupCard(hits) {
         comments,
         downloads,
       }) => {
-        return `<div class="photo-card">
-   <a class="photo__link" href="${largeImageURL}">
-      <img src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+        return `<div class="gallery__item">
+   <a class="gallery__link" href="${largeImageURL}">
+      <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
   <div class="info">
     <p class="info-item">
-      <b>${likes}</b>
+      <b>Likes</b></br>${likes}
     </p>
     <p class="info-item">
-      <b>${views}</b>
+      <b>Views</b></br>${views}
     </p>
     <p class="info-item">
-      <b>${comments}</b>
+      <b>Comments</b></br>${comments}
     </p>
     <p class="info-item">
-      <b>${downloads}</b>
+      <b>Downloads</b></br>${downloads}
     </p>
   </div>
 </div>`;
