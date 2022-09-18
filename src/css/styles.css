@@ -63,3 +63,13 @@ body {
 .gallery__link:hover {
   cursor: zoom-in;
 }
+
+.load-more {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+.load-more.is-hidden {
+  display: none;
+}

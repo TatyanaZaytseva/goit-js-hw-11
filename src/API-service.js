@@ -21,10 +21,10 @@ export class PicturesApiService {
           );
           return;
         }
-        Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+        // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
 
         this.incrementPage();
-        return data.hits;
+        return data;
       });
   }
   incrementPage() {

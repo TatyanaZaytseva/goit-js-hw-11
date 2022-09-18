@@ -6,13 +6,7 @@ import 'simplelightbox/dist/simple-lightbox.min.css';
 // import API from './fetchPictures.js';
 import { PicturesApiService } from './API-service';
 import { markupCard } from './markupCard.js';
-
-const refs = {
-  form: document.getElementById('search-form'),
-  gallery: document.querySelector('.gallery'),
-  loadMoreBtn: document.querySelector('.load-more'),
-};
-
+import { refs } from './refs';
 const picturesApiService = new PicturesApiService();
 
 refs.form.addEventListener('submit', onSearchPictures);
@@ -20,14 +14,21 @@ refs.loadMoreBtn.addEventListener('click', onLoadMore);
 
 function onSearchPictures(event) {
   event.preventDefault();
-  clearPicturesGallery();
+  refs.loadMoreBtn.classList.add('is-hidden');
   picturesApiService.query = event.target.elements.searchQuery.value;
   picturesApiService.resetPage();
-  picturesApiService.fetchPicturesByName().then(renderPicturesCards);
+  picturesApiService.fetchPicturesByName().then(data => {
+    clearPicturesGallery();
+    Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+    renderPicturesCards(data.hits);
+    refs.loadMoreBtn.classList.remove('is-hidden');
+  });
 }
 
 function onLoadMore() {
-  picturesApiService.fetchPicturesByName().then(renderPicturesCards);
+  picturesApiService.fetchPicturesByName().then(data => {
+    renderPicturesCards(data.hits);
+  });
 }
 
 function renderPicturesCards(hits) {
