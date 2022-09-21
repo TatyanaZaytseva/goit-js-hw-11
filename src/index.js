@@ -1,12 +1,16 @@
 import './css/styles.css';
 import Notiflix from 'notiflix';
-// import axios from 'axios';
 import SimpleLightbox from 'simplelightbox';
 import 'simplelightbox/dist/simple-lightbox.min.css';
-// import API from './fetchPictures.js';
 import { PicturesApiService } from './API-service';
 import { markupCard } from './markupCard.js';
 import { refs } from './refs';
+
+const lightbox = new SimpleLightbox('.gallery a', {
+  captionsData: 'alt',
+  captionsDelay: 250,
+});
+
 const picturesApiService = new PicturesApiService();
 
 refs.form.addEventListener('submit', onSearchPictures);
@@ -28,6 +32,14 @@ function onSearchPictures(event) {
 function onLoadMore() {
   picturesApiService.fetchPicturesByName().then(data => {
     renderPicturesCards(data.hits);
+    lightbox.refresh();
+    if (refs.gallery.children.length > data.totalHits) {
+      refs.loadMoreBtn.classList.add('is-hidden');
+      Notiflix.Notify.info(
+        "We're sorry, but you've reached the end of search results."
+      );
+      return;
+    }
   });
 }
 
@@ -38,37 +50,3 @@ function renderPicturesCards(hits) {
 function clearPicturesGallery() {
   refs.gallery.innerHTML = '';
 }
-
-// new SimpleLightbox('.gallery a', {
-//   captionsData: 'alt',
-//   captionsDelay: 250,
-// });
-
-// refs.gallery.addEventListener('click', onCardHandleClick);
-// const instance = basicLightbox.create(`<img src="" alt="full-image"/>`);
-
-// function onCardHandleClick(event) {
-//   event.preventDefault();
-//   console.log(event.target);
-
-//   if (event.target.nodeName !== 'IMG') {
-//     return;
-//   }
-//   let urlOriginalPhoto = event.target.dataset.source;
-
-//   const modalImage = instance.element().querySelector('img');
-//   modalImage.src = urlOriginalPhoto;
-//   instance.show();
-//   const visib = basicLightbox.visible();
-
-//   window.addEventListener('keydown', onEscapeClick);
-// }
-// function onCloseModal() {
-//   instance.close();
-//   window.removeEventListener('keydown', onEscapeClick);
-// }
-// function onEscapeClick(event) {
-//   if (event.key === 'Escape') {
-//     onCloseModal();
-//   }
-// }

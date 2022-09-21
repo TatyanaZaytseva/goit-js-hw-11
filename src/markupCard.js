@@ -10,9 +10,9 @@ export function markupCard(hits) {
         comments,
         downloads,
       }) => {
-        return `<div class="gallery__item">
+        return `<div class="gallery__item"><div class="gallery__photo">
    <a class="gallery__link" href="${largeImageURL}">
-      <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a>
+      <img class="gallery__image" src="${webformatURL}" alt="${tags}" loading="lazy" /></a></div>
   <div class="info">
     <p class="info-item">
       <b>Likes</b></br>${likes}
@@ -27,7 +27,8 @@ export function markupCard(hits) {
       <b>Downloads</b></br>${downloads}
     </p>
   </div>
-</div>`;
+</div>
+`;
       }
     )
     .join('');

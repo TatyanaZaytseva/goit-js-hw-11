@@ -1,7 +1,10 @@
 import Notiflix from 'notiflix';
+import axios from 'axios';
 
 const API_KEY = '29872445-b11cb18030e5a7e55f6afbc9a';
 const BASE_URL = 'https://pixabay.com/api/';
+const PARAMS =
+  'image_type=photo&orientation=horizontal&safesearch=true&per_page=40';
 
 export class PicturesApiService {
   constructor() {
@@ -9,23 +12,24 @@ export class PicturesApiService {
     this.page = 1;
   }
 
-  fetchPicturesByName() {
-    let url = `${BASE_URL}?key=${API_KEY}&q=${this.searchQuery}&image_type=photo&orientation=horizontal&safesearch=true&per_page=40&page=${this.page}`;
+  async fetchPicturesByName() {
+    try {
+      let url = `${BASE_URL}?key=${API_KEY}&q=${this.searchQuery}&${PARAMS}&page=${this.page}`;
 
-    return fetch(url)
-      .then(response => response.json())
-      .then(data => {
-        if (data.hits.length === 0) {
-          Notiflix.Notify.failure(
-            'Sorry, there are no images matching your search query. Please try again.'
-          );
-          return;
-        }
-        // Notiflix.Notify.success(`Hooray! We found ${data.totalHits} images.`);
+      const response = await axios.get(url);
 
-        this.incrementPage();
-        return data;
-      });
+      if (response.data.hits.length === 0) {
+        Notiflix.Notify.failure(
+          'Sorry, there are no images matching your search query. Please try again.'
+        );
+        return;
+      }
+
+      this.incrementPage();
+      return response.data;
+    } catch (error) {
+      console.log(error);
+    }
   }
   incrementPage() {
     this.page += 1;
